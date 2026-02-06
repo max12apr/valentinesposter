@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Valenflix ❤️</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-black text-white min-h-screen flex flex-col items-center p-6">
+
+  <h1 class="text-3xl font-bold mb-2">💘 Valentine Poster Generator</h1>
+  <p class="text-gray-400 mb-6">Spotify • Netflix • Movie vibes</p>
+
+  <!-- Controls -->
+  <div class="w-full max-w-md space-y-4">
+    <input id="title" placeholder="Title (e.g. Our Love Story)"
+      class="w-full p-3 rounded bg-gray-800 text-white" />
+
+    <input id="subtitle" placeholder="Subtitle (e.g. Streaming Forever)"
+      class="w-full p-3 rounded bg-gray-800 text-white" />
+
+    <select id="style" class="w-full p-3 rounded bg-gray-800">
+      <option value="spotify">🎧 Spotify Album</option>
+      <option value="netflix">🎬 Netflix Poster</option>
+    </select>
+
+    <input id="imageInput" type="file" accept="image/*"
+      class="w-full text-sm text-gray-400" />
+
+    <button onclick="generatePoster()"
+      class="w-full bg-red-600 hover:bg-red-700 p-3 rounded font-bold">
+      Generate Poster
+    </button>
+  </div>
+
+  <!-- Canvas -->
+  <canvas id="canvas" width="1080" height="1350"
+    class="mt-6 rounded shadow-lg bg-black"></canvas>
+
+  <a id="downloadBtn"
+    class="hidden mt-4 bg-green-600 px-6 py-3 rounded font-bold"
+    download="valentine-poster.png">
+    Download PNG
+  </a>
+
+<script>
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+function generatePoster() {
+  const title = document.getElementById("title").value || "Our Love Story";
+  const subtitle = document.getElementById("subtitle").value || "Now Streaming Forever";
+  const style = document.getElementById("style").value;
+  const file = document.getElementById("imageInput").files[0];
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Background
+  ctx.fillStyle = "#111";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  if (file) {
+    const img = new Image();
+    img.onload = () => {
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      overlayText(title, subtitle, style);
+    };
+    img.src = URL.createObjectURL(file);
+  } else {
+    overlayText(title, subtitle, style);
+  }
+}
+
+function overlayText(title, subtitle, style) {
+  ctx.fillStyle = "rgba(0,0,0,0.55)";
+  ctx.fillRect(0, canvas.height - 350, canvas.width, 350);
+
+  ctx.textAlign = "left";
+
+  if (style === "spotify") {
+    ctx.fillStyle = "#1DB954";
+    ctx.font = "bold 36px Arial";
+    ctx.fillText("ALBUM", 60, 70);
+
+    ctx.fillStyle = "#fff";
+    ctx.font = "bold 72px Arial";
+    ctx.fillText(title, 60, canvas.height - 180);
+
+    ctx.font = "36px Arial";
+    ctx.fillText(subtitle, 60, canvas.height - 120);
+  }
+
+  if (style === "netflix") {
+    ctx.fillStyle = "#E50914";
+    ctx.font = "bold 40px Arial";
+    ctx.fillText("NETFLIX ORIGINAL", 60, 70);
+
+    ctx.fillStyle = "#fff";
+    ctx.font = "bold 80px Arial";
+    ctx.fillText(title, 60, canvas.height - 180);
+
+    ctx.font = "36px Arial";
+    ctx.fillText(subtitle, 60, canvas.height - 120);
+  }
+
+  // Watermark
+  ctx.font = "20px Arial";
+  ctx.fillStyle = "#aaa";
+  ctx.fillText("Made with ❤️ on Valenflix", 60, canvas.height - 40);
+
+  const link = document.getElementById("downloadBtn");
+  link.href = canvas.toDataURL("image/png");
+  link.classList.remove("hidden");
+}
+</script>
+
+</body>
+</html>
